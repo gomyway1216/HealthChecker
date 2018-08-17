@@ -167,7 +167,7 @@ public class DatabaseActivity extends BaseActivity {
                     public void run() {
                         try {
                             if (isTTS) {
-                                sleep(500);
+                                sleep(1500);
                                 if(languagePref.equals("EN"))
                                     speak("Please choose one choice after the speech and say the number");
                                 else if(languagePref.equals("PT"))
@@ -183,6 +183,10 @@ public class DatabaseActivity extends BaseActivity {
                                     sleep(1000);
                                     while (mTTS.isSpeaking())
                                         sleep(500);
+                                    speak(i + 1 + "");
+                                    while (mTTS.isSpeaking())
+                                        sleep(500);
+                                    sleep(500);
                                     speak(choices[index]);
                                 }
 
@@ -203,7 +207,7 @@ public class DatabaseActivity extends BaseActivity {
                     public void run() {
                         try {
                             if (isTTS) {
-                                sleep(500);
+                                sleep(1500);
                                 if(languagePref.equals("EN"))
                                     speak("Please choose as many as you want");
                                 else if(languagePref.equals("PT"))
@@ -226,6 +230,10 @@ public class DatabaseActivity extends BaseActivity {
                                     sleep(1000);
                                     while (mTTS.isSpeaking())
                                         sleep(500);
+                                    speak(i + 1 + "");
+                                    while (mTTS.isSpeaking())
+                                        sleep(500);
+                                    sleep(500);
                                     speak(choices[index]);
                                     while (mTTS.isSpeaking())
                                         sleep(1000);
@@ -256,7 +264,7 @@ public class DatabaseActivity extends BaseActivity {
                     @Override
                     public void run() {
                         try {
-                            sleep(500);
+                            sleep(1500);
                             speak(qText);
                             if (isSTT) {
                                 while (mTTS.isSpeaking()) {
@@ -272,7 +280,7 @@ public class DatabaseActivity extends BaseActivity {
                                 while (mTTS.isSpeaking())
                                     sleep(1000);
                                 getSpeechInputInteger();
-
+                                sleep(500);
                             }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -286,7 +294,7 @@ public class DatabaseActivity extends BaseActivity {
                     @Override
                     public void run() {
                         try {
-                            sleep(500);
+                            sleep(1500);
                             speak(qText);
                             if (isSTT) {
                                 while (mTTS.isSpeaking()) {
@@ -302,6 +310,7 @@ public class DatabaseActivity extends BaseActivity {
                                 while (mTTS.isSpeaking())
                                     sleep(1000);
                                 getSpeechInputString();
+                                sleep(500);
                             }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -370,9 +379,9 @@ public class DatabaseActivity extends BaseActivity {
                 RadioButton rdbtn = new RadioButton(this);
                 rdbtn.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 300));
                 rdbtn.setId(i);
-                rdbtn.setText(choices[i-1]);
+                rdbtn.setText(i + ". " + choices[i-1]);
                 rg.addView(rdbtn);
-                speak(choices[i-1]);
+//                speak(choices[i-1]);
             }
             sv.addView(rg);
 
@@ -403,8 +412,8 @@ public class DatabaseActivity extends BaseActivity {
             for(int i = 1; i < number + 1; i++) {
                 checkBox = new CheckBox(this);
                 checkBox.setId(i);
-                checkBox.setText(choices[i-1]);
-                speak(choices[i-1]);
+                checkBox.setText(i + ". " + choices[i-1]);
+//                speak(choices[i-1]);
                 checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -550,7 +559,7 @@ public class DatabaseActivity extends BaseActivity {
         } else if(languagePref.equals("PT")) {
             Log.i("speech recg", "speech recg");
 //            Locale locPor = new Locale("pt_PT");
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "pt_PT");
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "pt_PT");
         }
 
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -572,7 +581,7 @@ public class DatabaseActivity extends BaseActivity {
         } else if(languagePref.equals("PT")) {
             Log.i("speech recg", "speech recg");
 //            Locale locPor = new Locale("pt_PT");
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "pt_PT");
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "pt_PT");
         }
 
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -594,7 +603,7 @@ public class DatabaseActivity extends BaseActivity {
         } else if(languagePref.equals("PT")) {
             Log.i("speech recg", "speech recg");
 //            Locale locPor = new Locale("pt_PT");
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "pt_PT");
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "pt_PT");
         }
 
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -641,14 +650,17 @@ public class DatabaseActivity extends BaseActivity {
                 if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     Toast.makeText(getApplicationContext(), result.get(0), Toast.LENGTH_LONG).show();
-                    understandSpeechSingle(result.get(0));
+                    for(int i = 0; i < result.size(); i++) {
+                        Log.d("Result print", "Result print : " + result.get(i));
+                    }
+                    understandSpeechSingle(result);
                 }
                 break;
             case 105:
                 if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     Toast.makeText(getApplicationContext(), result.get(0), Toast.LENGTH_LONG).show();
-                    understandSpeechInteger(result.get(0));
+                    understandSpeechInteger(result);
                 }
                 break;
             case 110:
@@ -663,53 +675,109 @@ public class DatabaseActivity extends BaseActivity {
 
     // recognizer method for question type 4
     private void understandSpeechMulti(String text) {
-        Log.e("Speech",""+text);
+        Log.e("Speech", "" + text);
         String[] speech = text.split(" ");
-        if(text.contains("yes")){
-            CheckBox cb = (CheckBox) findViewById(speakingChoice);
-            cb.setChecked(true);;
 
+        if (languagePref.equals("EN")){
+            if (text.contains("yes")) {
+                CheckBox cb = (CheckBox) findViewById(speakingChoice);
+                cb.setChecked(true);
+            }
+        } else if(languagePref.equals("PT")) {
+            if(text.contains("sim")) {
+                CheckBox cb = (CheckBox) findViewById(speakingChoice);
+                cb.setChecked(true);
+            }
+        }
+    }
+
+    private boolean tryParseInt(String value) {
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean tryParseDouble(String value) {
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 
     // recognizer method for question type 3
-    private void understandSpeechSingle(String text) {
-        try {
-            int choice = Integer.parseInt(text);
-
-            for(int i = 0; i < choices.length; i++) {
-                if(choice == i + 1) {
-                    RadioButton rdbtn = (RadioButton) findViewById(choice);
-                    rdbtn.setChecked(true);
+    private void understandSpeechSingle(ArrayList<String> result) {
+//            Log.d("other log", "other log");
+//            Log.d("the number", "the number: " + text);
+            int index = -1;
+            for(int i = 0; i < result.size(); i++) {
+                if(tryParseInt(result.get(i))) {
+                    index = i;
                     break;
                 }
             }
-        } catch(Exception e) {
-            // repeat asking
-            // I will do it later
-        }
+
+            Log.d("index of int", "index of int : " + index);
+            if(index != -1) {
+                int choice = Integer.parseInt(result.get(index));
+                for(int i = 0; i < choices.length; i++) {
+                    if(choice == i + 1) {
+                        RadioButton rdbtn = (RadioButton) findViewById(choice);
+                        rdbtn.setChecked(true);
+                        break;
+                    }
+                }
+            }
     }
 
     // recognizer method for question type 1
-    private void understandSpeechInteger(String text) {
-        try {
-            double ansDouble = Double.parseDouble(text);
+    private void understandSpeechInteger(ArrayList<String> result) {
+
+        int index = -1;
+        for(int i = 0; i < result.size(); i++) {
+            if(tryParseDouble(result.get(i))) {
+                index = i;
+                break;
+            }
+        }
+
+        if(index != -1) {
+            double ansDouble = Double.parseDouble(result.get(index));
             int eTextChoice = 1;
             EditText et = (EditText) findViewById(eTextChoice);
             et.setText(String.valueOf(ansDouble));
-
-            Log.d("No convertion", "No convertion ");
-
-        } catch(Exception e) {
-            Toast.makeText(getApplicationContext(), "Please Use Number!", Toast.LENGTH_LONG).show();
-            getSpeechInputInteger();
-            Log.d("Exception convertion", "Exception convertion " + e.getMessage());
-            int eTextChoice = 1;
-            EditText et = (EditText) findViewById(eTextChoice);
-            et.setText("");
-            // repeat asking
-            // I will do it later
         }
+
+
+//        try {
+//
+//
+//
+//
+//
+//
+//
+//            double ansDouble = Double.parseDouble(text);
+//            int eTextChoice = 1;
+//            EditText et = (EditText) findViewById(eTextChoice);
+//            et.setText(String.valueOf(ansDouble));
+//
+//            Log.d("No convertion", "No convertion ");
+//
+//        } catch(Exception e) {
+//            Toast.makeText(getApplicationContext(), "Please Use Number!", Toast.LENGTH_LONG).show();
+//            getSpeechInputInteger();
+//            Log.d("Exception convertion", "Exception convertion " + e.getMessage());
+//            int eTextChoice = 1;
+//            EditText et = (EditText) findViewById(eTextChoice);
+//            et.setText("");
+//            // repeat asking
+//            // I will do it later
+//        }
     }
 
     // recognizer method for question type 2
