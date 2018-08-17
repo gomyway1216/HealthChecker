@@ -5,6 +5,9 @@ import android.content.Context;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
+/**
+ * Open helper for database.
+ */
 public class DatabaseAssetOpenHelper extends SQLiteAssetHelper {
 //    private static final String DATABASE_NAME = "quotes.db";
 //    private static final String DATABASE_NAME = "questionSet.db";

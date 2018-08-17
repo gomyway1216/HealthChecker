@@ -16,6 +16,9 @@ import java.util.Locale;
 
 import com.yudaiyaguchi.HealthChecker.R;
 
+/**
+ *  User can play around with TTS
+ */
 public class TTSActivity extends AppCompatActivity {
     private TextToSpeech mTTS;
     private EditText mEditText;
@@ -29,6 +32,10 @@ public class TTSActivity extends AppCompatActivity {
     private float pitch;
     private float speed;
 
+    /**
+     * initialize TTS
+     * @param savedInstanceState : saved instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +45,7 @@ public class TTSActivity extends AppCompatActivity {
         mDefault = findViewById(R.id.button_back_to_default);
         mOk = findViewById(R.id.button_ok);
 
-
+        // set TTS
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -109,6 +116,9 @@ public class TTSActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * speak method. speak is async. Be careful when you are using it.
+     */
     private void speak() {
         String text = mEditText.getText().toString();
         pitch = (float) mSeekBarPitch.getProgress() / 50;
@@ -124,16 +134,17 @@ public class TTSActivity extends AppCompatActivity {
         } else {
             mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
-//        mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
+    /**
+     * This method might not be called.
+     */
     @Override
     protected void onDestroy() {
         if (mTTS != null) {
             mTTS.stop();
             mTTS.shutdown();
         }
-
         super.onDestroy();
     }
 }

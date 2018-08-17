@@ -32,6 +32,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ *  This gets the data by using DAtabaseAccess class and get data. Based on the data passed,
+ *  it populates each question. This also includes TTS (text to speech) and STT speech to text.
+ */
 public class DatabaseActivity extends BaseActivity {
 //    private ListView listView;
     private int[] choiceValues;
@@ -63,6 +67,13 @@ public class DatabaseActivity extends BaseActivity {
     private int questionTypeNumber;
 
 
+    /**
+     * Gets the data by using DAtabaseAccess class and get data. Based on the data passed,
+     *  it populates each question. This also includes TTS (text to speech) and STT speech to text.
+     * // TODO: 8/17/18 find better way to treat TTS and STT without using hard cording sleep.
+     * // TODO: 8/17/18 remove the hard cording part.
+     * @param savedInstanceState : contains setting data
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +95,6 @@ public class DatabaseActivity extends BaseActivity {
         // This seems not working. Some work should be done here
         seekBarPitchProgress = sharedPref.getInt("seekBarPitchProgress", 50);
         seekBarSpeedProgress = sharedPref.getInt("seekBarSpeedProgress", 50);
-
 
         // initialize mTTS
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -116,7 +126,6 @@ public class DatabaseActivity extends BaseActivity {
                 speak(qText);
             }
         });
-
 
         // this stores the information of questions
         // this would be updated every single time this activity is called
@@ -151,6 +160,12 @@ public class DatabaseActivity extends BaseActivity {
 
         // if there are multiple choices in the question
         // this is the radio button and check box type
+        // there are two many sleeps that I have made, there need to be fix for that.
+        // Since I was not sure how TTS and STT works asynchronously
+        // Without sleep, there are many overlapping and
+        // some of the stuff was not working because of that
+        // making individual threat might not be necessary
+        // hard coding part should be removed to make this applicable to other languages
         if(listId != 0) {
             query = databaseAccess.getAlternative(listId);
             altId = new int[query.length];
@@ -279,7 +294,7 @@ public class DatabaseActivity extends BaseActivity {
                                 sleep(500);
                                 while (mTTS.isSpeaking())
                                     sleep(1000);
-                                getSpeechInputInteger();
+                                getSpeechInputDouble();
                                 sleep(500);
                             }
                         } catch (InterruptedException e) {
@@ -321,6 +336,7 @@ public class DatabaseActivity extends BaseActivity {
             }
         }
 
+        // This prevents memory leak
         databaseAccess.close();
 
         // Layout container, to format the layout, you should modify from here
@@ -342,6 +358,8 @@ public class DatabaseActivity extends BaseActivity {
         linearLayout.addView(questionTextView);
 
         // set the elements into screen
+        // the layout of elements should be depending on the question type
+        // there are currently 4 types of question.
         if(questionTypeNumber == 1) {
                 // integer input
             editText = new EditText(this);
@@ -528,15 +546,19 @@ public class DatabaseActivity extends BaseActivity {
                 }
             }
         });
-
-            bottomLinearLayout.addView(nextButton);
-//        linearLayout.addView(nextButton);
+        bottomLinearLayout.addView(nextButton);
         linearLayout.addView(bottomLinearLayout);
-
     }
 
-
     // further work should be done if you want to change the voice pitch and speed
+
+    /**
+     * // speak is async, so this is tricky
+     * // TODO: 8/17/18 Further work should be done if you want to change the voice pitch and speed
+     * // Just access to the setting that I saved pitches
+     *
+     * @param text
+     */
     private void speak(String text) {
         float pitch = (float) seekBarPitchProgress / 50;
         if (pitch < 0.1) pitch = 0.1f;
@@ -549,7 +571,12 @@ public class DatabaseActivity extends BaseActivity {
         mTTS.speak(text,TextToSpeech.QUEUE_FLUSH,null,null);
     }
 
-    // speech recognition for question type 4
+
+    /**
+     * Speech recognition for question type 4.
+     * RequestCode ( this use 10 ) is the arbitrary number
+     * So you can choose any number as long as it doesn't overlap with others.
+     */
     public void getSpeechInputMulti() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -570,12 +597,15 @@ public class DatabaseActivity extends BaseActivity {
 
     }
 
-    // speech recognition for question type 3
+    /**
+     * Speech recognition for question type 3.
+     * RequestCode ( this use 100 ) is the arbitrary number
+     * So you can choose any number as long as it doesn't overlap with others.
+     */
     public void getSpeechInputSingle() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 
-        Locale loc;
         if(languagePref.equals("EN")) {
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH);
         } else if(languagePref.equals("PT")) {
@@ -589,15 +619,17 @@ public class DatabaseActivity extends BaseActivity {
         } else {
             Toast.makeText(this, "Your Device Don't Support Speech Input", Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    // speech recognition for question type 1
-    public void getSpeechInputInteger() {
+    /**
+     * Speech recognition for question type 1.
+     * RequestCode ( this use 105 ) is the arbitrary number
+     * So you can choose any number as long as it doesn't overlap with others.
+     */
+    public void getSpeechInputDouble() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 
-        Locale loc;
         if(languagePref.equals("EN")) {
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH);
         } else if(languagePref.equals("PT")) {
@@ -611,15 +643,17 @@ public class DatabaseActivity extends BaseActivity {
         } else {
             Toast.makeText(this, "Your Device Don't Support Speech Input", Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    // speech recognition for question type 2
+    /**
+     * Speech recognition for question type 2.
+     * RequestCode ( this use 110 ) is the arbitrary number
+     * So you can choose any number as long as it doesn't overlap with others.
+     */
     public void getSpeechInputString() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 
-        Locale loc;
         if(languagePref.equals("EN")) {
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH);
         } else if(languagePref.equals("PT")) {
@@ -634,10 +668,21 @@ public class DatabaseActivity extends BaseActivity {
     }
 
     // based on the type of question, request code changes, request code is just the arbitrary number
+
+    /**
+     * This gets the result from STT system.
+     *
+     * @param requestCode : request code
+     * @param resultCode : result code
+     * @param data : data passed by the system.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // result contains the list of words that STT guest to be correct.
+        // To get number input, make sure to go through each string in result
+        // check the understandSpeechMulti method and understandSpeechInteger method.
         switch (requestCode) {
             case 10:
                 if (resultCode == RESULT_OK && data != null) {
@@ -650,9 +695,6 @@ public class DatabaseActivity extends BaseActivity {
                 if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     Toast.makeText(getApplicationContext(), result.get(0), Toast.LENGTH_LONG).show();
-                    for(int i = 0; i < result.size(); i++) {
-                        Log.d("Result print", "Result print : " + result.get(i));
-                    }
                     understandSpeechSingle(result);
                 }
                 break;
@@ -660,7 +702,7 @@ public class DatabaseActivity extends BaseActivity {
                 if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     Toast.makeText(getApplicationContext(), result.get(0), Toast.LENGTH_LONG).show();
-                    understandSpeechInteger(result);
+                    understandSpeechDouble(result);
                 }
                 break;
             case 110:
@@ -673,24 +715,14 @@ public class DatabaseActivity extends BaseActivity {
         }
     }
 
-    // recognizer method for question type 4
-    private void understandSpeechMulti(String text) {
-        Log.e("Speech", "" + text);
-        String[] speech = text.split(" ");
-
-        if (languagePref.equals("EN")){
-            if (text.contains("yes")) {
-                CheckBox cb = (CheckBox) findViewById(speakingChoice);
-                cb.setChecked(true);
-            }
-        } else if(languagePref.equals("PT")) {
-            if(text.contains("sim")) {
-                CheckBox cb = (CheckBox) findViewById(speakingChoice);
-                cb.setChecked(true);
-            }
-        }
-    }
-
+    /**
+     * Check whether the parsed string can be parsed into int or no.
+     * By making this, since this method is called multiple times by a loop in other method,
+     * I can avoid parseInt cause code to crash by exception.
+     *
+     * @param value : passed string from methods that want to convert string to int
+     * @return : whether it is successful to convert string to int or not,
+     */
     private boolean tryParseInt(String value) {
         try {
             Integer.parseInt(value);
@@ -700,6 +732,14 @@ public class DatabaseActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Check whether the parsed string can be parsed into double or no.
+     * By making this, since this method is called multiple times by a loop in other method,
+     * I can avoid parseDouble cause code to crash by exception.
+     *
+     * @param value : passed string from methods that want to convert string to double
+     * @return : whether it is successful to convert string to double or not,
+     */
     private boolean tryParseDouble(String value) {
         try {
             Double.parseDouble(value);
@@ -709,7 +749,34 @@ public class DatabaseActivity extends BaseActivity {
         }
     }
 
-    // recognizer method for question type 3
+    /**
+     * // isplay the result for check box question type.
+     * // TODO remove the hard code if you want to apply to other languages.
+     *
+     * @param text : text passed by onActivityResult method.
+     */
+    private void understandSpeechMulti(String text) {
+        Log.e("Speech", "" + text);
+        String[] speech = text.split(" ");
+
+        if (languagePref.equals("EN")){
+            if (text.contains("yes")) {
+                CheckBox cb = findViewById(speakingChoice);
+                cb.setChecked(true);
+            }
+        } else if(languagePref.equals("PT")) {
+            if(text.contains("sim")) {
+                CheckBox cb = findViewById(speakingChoice);
+                cb.setChecked(true);
+            }
+        }
+    }
+
+    /**
+     * // Display the result for radio button question type.
+     *
+     * @param result : contains the list of strings that system think what the user said.
+     */
     private void understandSpeechSingle(ArrayList<String> result) {
 //            Log.d("other log", "other log");
 //            Log.d("the number", "the number: " + text);
@@ -726,7 +793,7 @@ public class DatabaseActivity extends BaseActivity {
                 int choice = Integer.parseInt(result.get(index));
                 for(int i = 0; i < choices.length; i++) {
                     if(choice == i + 1) {
-                        RadioButton rdbtn = (RadioButton) findViewById(choice);
+                        RadioButton rdbtn = findViewById(choice);
                         rdbtn.setChecked(true);
                         break;
                     }
@@ -734,8 +801,12 @@ public class DatabaseActivity extends BaseActivity {
             }
     }
 
-    // recognizer method for question type 1
-    private void understandSpeechInteger(ArrayList<String> result) {
+    /**
+     * // isplay the result for number input question type.
+     *
+     * @param result : contains the list of strings that system think what the user said.
+     */
+    private void understandSpeechDouble(ArrayList<String> result) {
 
         int index = -1;
         for(int i = 0; i < result.size(); i++) {
@@ -748,46 +819,25 @@ public class DatabaseActivity extends BaseActivity {
         if(index != -1) {
             double ansDouble = Double.parseDouble(result.get(index));
             int eTextChoice = 1;
-            EditText et = (EditText) findViewById(eTextChoice);
+            EditText et = findViewById(eTextChoice);
             et.setText(String.valueOf(ansDouble));
         }
-
-
-//        try {
-//
-//
-//
-//
-//
-//
-//
-//            double ansDouble = Double.parseDouble(text);
-//            int eTextChoice = 1;
-//            EditText et = (EditText) findViewById(eTextChoice);
-//            et.setText(String.valueOf(ansDouble));
-//
-//            Log.d("No convertion", "No convertion ");
-//
-//        } catch(Exception e) {
-//            Toast.makeText(getApplicationContext(), "Please Use Number!", Toast.LENGTH_LONG).show();
-//            getSpeechInputInteger();
-//            Log.d("Exception convertion", "Exception convertion " + e.getMessage());
-//            int eTextChoice = 1;
-//            EditText et = (EditText) findViewById(eTextChoice);
-//            et.setText("");
-//            // repeat asking
-//            // I will do it later
-//        }
     }
 
-    // recognizer method for question type 2
+    /**
+     * // isplay the result for text input question type.
+     *
+     * @param text : text passed by onActivityResult method.
+     */
     private void understandSpeechString(String text) {
         int eTextChoice = 1;
-        EditText et = (EditText) findViewById(eTextChoice);
+        EditText et = findViewById(eTextChoice);
         et.setText(text);
     }
 
-    // it may not be called
+    /**
+     * This method might not be called.
+     */
     @Override
     public void onDestroy() {
         if (mTTS != null) {

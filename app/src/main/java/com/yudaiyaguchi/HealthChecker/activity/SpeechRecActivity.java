@@ -22,7 +22,7 @@ public class SpeechRecActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speech_rec);
-        txvResult = (TextView) findViewById(R.id.txvResult);
+        txvResult = findViewById(R.id.txvResult);
     }
 
     public void getSpeechInput(View view) {

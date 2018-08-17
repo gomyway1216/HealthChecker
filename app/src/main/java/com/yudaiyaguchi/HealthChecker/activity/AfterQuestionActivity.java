@@ -10,7 +10,6 @@ import android.widget.Button;
 import com.yudaiyaguchi.HealthChecker.R;
 import com.yudaiyaguchi.HealthChecker.Settings.QuizUtils;
 import com.yudaiyaguchi.HealthChecker.database.DatabaseAccess;
-import com.yudaiyaguchi.HealthChecker.database.DatabaseWriteHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,8 +22,6 @@ import java.util.Calendar;
  * This Activity is responsible to save data from QuizUtils to database.
  */
 public class AfterQuestionActivity extends AppCompatActivity {
-    DatabaseWriteHelper myDb;
-
     /**
      * Save data from QuizUtils to database.
      * @param savedInstanceState : has settings
@@ -33,8 +30,6 @@ public class AfterQuestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after_question);
-        // get access to database
-        myDb = new DatabaseWriteHelper(this);
 
         // store the data to the database
         // show the result to make sure it is woking correctly
