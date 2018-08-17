@@ -32,3 +32,5 @@ Achievement
    For instance, nubmer of choices of multiple choice question doesn't affect how my page look like in each activities.
 5. Gained idea of how text to speech and speech to text works. To implement better way, 
    I need to study how the thread works more.
+
+![screenshot_healthchecker](https://user-images.githubusercontent.com/32227575/44286108-d2618780-a25f-11e8-8290-799f43e65fcf.jpeg)
