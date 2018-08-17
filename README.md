@@ -13,14 +13,15 @@ Second part is questionnaire. Quesions are feeded by SQL database and store the 
 Purpose and fixes
 --------------
 
-#This app was build for learning purpose so there could be further improvement.
-#This works for English and Portuguese.
-There are some issues in use of text to speech and speech to text. 
-I contained many hard coded sleep to prevent several TTS and STT from overlapping. 
-There should be some fixes to them.
-I also prepared setting activity that can contain more settings.
-To make this app work for other language, modify the hard corded part.
+This app was build for learning purpose so there could be further improvement. <br />
+This works for English and Portuguese. <br />
+There are some issues in use of text to speech and speech to text.  <br />
+I contained many hard coded sleep to prevent several TTS and STT from overlapping.  <br />
+There should be some fixes to them. <br />
+I also prepared setting activity that can contain more settings. <br />
+To make this app work for other language, modify the hard corded part. <br />
 Styling should be done.
+I didn't delete some files that might be useful in the future for learning purpose. <br />
 
 Achievement 
 ---------------
