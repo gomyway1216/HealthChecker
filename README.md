@@ -13,8 +13,8 @@ Second part is questionnaire. Quesions are feeded by SQL database and store the 
 Purpose and fixes
 --------------
 
-This app was build for learning purpose so there could be further improvement.
-This works for English and Portuguese.
+#This app was build for learning purpose so there could be further improvement.
+#This works for English and Portuguese.
 There are some issues in use of text to speech and speech to text. 
 I contained many hard coded sleep to prevent several TTS and STT from overlapping. 
 There should be some fixes to them.
