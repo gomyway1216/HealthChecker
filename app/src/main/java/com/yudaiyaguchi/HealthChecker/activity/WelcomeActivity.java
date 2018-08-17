@@ -36,15 +36,6 @@ public class WelcomeActivity extends BaseActivity {
         editor.putInt("seekBarSpeedProgress", 50);
         editor.apply();
 
-
-        if(isTTS) {
-            Toast.makeText(getApplicationContext(), "The choice is: " +
-                    " true ", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getApplicationContext(), "The choice is: " +
-                    " false ", Toast.LENGTH_SHORT).show();
-        }
-
         final Button databaseButton = findViewById(R.id.database);
         databaseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

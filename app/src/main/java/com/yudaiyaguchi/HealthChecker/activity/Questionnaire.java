@@ -48,71 +48,35 @@ public class Questionnaire extends BaseActivity {
         LinearLayout linearLayout = findViewById(R.id
                 .container);
 
-        int numOfLanguage = languages.size();
-        for(int i=1; i < numOfLanguage+1; i++) {
+        int index = 1;
+        for (String key : questionIds.keySet()) {
             Button lBtn = new Button(this);
-            lBtn.setId(i);
-            lBtn.setText(languages.get(i));
+            lBtn.setId(index);
+            lBtn.setText(key);
             ll.addView(lBtn);
-            lBtn.setOnClickListener(getOnClickLanguage(lBtn));
+            lBtn.setOnClickListener(getOnClickGroup(lBtn, questionIds.get(key)));
+            index++;
         }
-
-
-        int index = numOfLanguage+1;
-    for (String key : questionIds.keySet()) {
-        Button lBtn = new Button(this);
-        lBtn.setId(index);
-        lBtn.setText(key);
-        ll.addView(lBtn);
-        lBtn.setOnClickListener(getOnClickLanguage(lBtn, questionIds.get(key)));
-    }
 
     sv.addView(ll);
     linearLayout.addView(sv);
 
     }
 
-    View.OnClickListener getOnClickLanguage(final Button button) {
+    View.OnClickListener getOnClickGroup(final Button button, final int[] ids) {
         return new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                languageId = button.getId();
-                Toast.makeText(getApplicationContext(), button.getText(), Toast.LENGTH_LONG).show();
-
-            }
-        };
-    }
-
-    View.OnClickListener getOnClickLanguage(final Button button, final int[] ids) {
-        return new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if(languageId == 0){
-                    Toast.makeText(getApplicationContext(), "Please choose the" +
-                            " language first.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-//                Intent questionIntent = new Intent(Questionnaire.this, DatabaseActivity.class);
-
-
                 QuizUtils quizUtils = QuizUtils.getInstance();
                 quizUtils.setQuestionIds(ids);
-                quizUtils.setChosenLanguageId(languageId);
+//                quizUtils.setChosenLanguageId(languageId);
                 quizUtils.setGroupName(button.getText().toString());
                 quizUtils.setIsGoing(true);
                 quizUtils.setCurrentQuestionCount(0);
                 quizUtils.initializeArray(ids.length);
-
-//                questionIntent.putExtra("questionIds", ids);
-//                questionIntent.putExtra("languageId", languageId);
-
                 Intent qIntent = new Intent(Questionnaire.this, DatabaseActivity.class);
                 startActivity(qIntent);
-
-
             }
         };
     }
