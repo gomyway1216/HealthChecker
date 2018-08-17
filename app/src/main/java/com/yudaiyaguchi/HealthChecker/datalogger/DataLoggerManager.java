@@ -31,7 +31,7 @@ public class DataLoggerManager implements Runnable {
     // # just return the class name
     private static final String tag = DataLoggerManager.class.getSimpleName();
 
-    public final static String DEFAULT_APPLICATION_DIRECTORY = "GyroscopeExplorer";
+    public final static String DEFAULT_APPLICATION_DIRECTORY = "HealthChecker";
 
     private final static long THREAD_SLEEP_TIME = 20;
     public final static String FILE_NAME_SEPARATOR = "-";
